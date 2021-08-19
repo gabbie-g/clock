@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="clock-fav.png" type="icon/png" sizes="16x16">
+    <title>Personalized Clock</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    
+    <div id="canvas-container">
+        <canvas id="canvas-h" width="450" height="350">
+            Your browser does not support canvas element.
+        </canvas>
+    
+        <canvas id="canvas-m" width="450" height="350">
+            Your browser does not support canvas element.
+        </canvas>
+
+        <canvas id="canvas-s" width="450" height="350">
+            Your browser does not support canvas element.
+        </canvas>
+    </div>
+    <script>
+
+        window.onload = init;
+
+        let ctxh;
+        let ctxm;
+        let ctxs;
+        let radius;
+        let now;
+        let hour;
+        let minute;
+        let second;
+
+        function init() {
+            let canvasH = document.getElementById("canvas-h");
+
+            if (canvasH.getContext) {
+
+                ctxh = canvasH.getContext('2d');
+                //radius = canvasH.height/2;
+                radius = ctxh.canvas.height/2;
+                drawSigns(ctxh);
+
+                now = new Date();   
+                hour = now.getHours(); 
+                minute = now.getMinutes();
+                second = now.getSeconds();
+
+                //hours
+                hour = hour%12;
+                hour = (hour*Math.PI/6) + (minute*Math.PI/(6*60)) + (second*Math.PI/(360*60)); 
+                drawHand(ctxh, hour, radius*0.6, radius*0.045);
+
+                setHourHand();
+
+            } else {
+                alert("Canvas is not supported.");
+            }
+
+
+            let canvasM = document.getElementById("canvas-m");
+
+            if (canvasM.getContext) {
+
+                ctxm = canvasM.getContext('2d');
+
+                minute = (minute*Math.PI/30) + (second*Math.PI/(30*60));
+                drawHand(ctxm, minute, radius*0.8, radius*0.03);
+                setMinutesHand(ctxm);
+
+            } else {
+                alert("Canvas is not supported.");
+            }
+
+
+            let canvasS = document.getElementById("canvas-s");
+
+            if (canvasS.getContext) {
+
+                ctxs = canvasS.getContext('2d');
+
+                second = (second*Math.PI/30);
+                drawHand(ctxs, second, radius*0.9, radius*0.02);
+                createSeconds(ctxs);
+
+            } else {
+                alert("Canvas is not supported.");
+            }
+        }
+
+
+        function createClock() {
+            ctxh.clearRect(0, 0, 450, 350);
+            drawSigns(ctxh);
+
+            now = new Date();   
+            hour = now.getHours(); 
+            minute = now.getMinutes();
+            second = now.getSeconds();
+
+            hour = hour%12;
+            hour = (hour*Math.PI/6) + (minute*Math.PI/(6*60)) + (second*Math.PI/(360*60)); 
+            drawHand(ctxh, hour, radius*0.6, radius*0.045);
+            
+            setTimeout(function () {
+                if(minute%12 == 0 && second/60 == 0){
+                    createClock();
+                } else{    
+                    setHourHand(ctxh);
+                }
+            }, 720000);
+        }
+
+
+        function createMinutes(ctxm) {
+            ctxm.clearRect(0, 0, 450, 350);
+
+            now = new Date();   
+            minute = now.getMinutes();
+            second = now.getSeconds();
+
+            minute = (minute*Math.PI/30) + (second*Math.PI/(30*60));
+            drawHand(ctxm, minute, radius*0.8, radius*0.03);
+
+            setTimeout(function () {
+                if(second/60 == 0){
+                    createMinutes(ctxm);
+                } else{
+                    setMinutesHand(ctxm);
+                }
+            }, 60000);
+        }
+
+
+        function createSeconds(ctxs) {
+            ctxs.clearRect(0, 0, 450, 350);
+
+            now = new Date();   
+            second = now.getSeconds();
+
+            second = (second*Math.PI/30);
+            drawHand(ctxs, second, radius*0.9, radius*0.02);
+
+            setTimeout(function () {
+                createSeconds(ctxs)
+            }, 1000);
+        }
+
+
+        function drawSigns(ctx){
+            ctxh.translate(200, 175);
+
+            ctx.fillStyle = '#85e9f6';
+            ctx.font = 'bold 30px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('II', 0, -radius*0.85);
+            ctx.fillText('I', 0, radius*0.98);
+
+            ctx.save();
+            ctx.rotate(Math.PI / 180 * 90);
+            ctx.fillText('I', 0, -radius*1.0);
+            ctx.fillText('I', 0, radius*1.05);
+            ctx.restore();
+
+            for(let i=30; i< 90; i += 30){
+                ctx.save();
+                ctx.rotate(Math.PI / 180 * i);
+                ctx.font = 'bold 20px sans-serif';
+                ctx.fillText('I', 0, -radius*0.95);
+                ctx.fillText('I', 0, radius*0.95);
+                ctx.restore();
+            }
+
+            for(let i=120; i< 180; i += 30){
+                ctx.save();
+                ctx.rotate(Math.PI / 180 * i);
+                ctx.font = 'bold 20px sans-serif';
+                ctx.fillText('I', 0, -radius*0.95);
+                ctx.fillText('I', 0, radius*0.95);
+                ctx.restore();
+            }
+
+            ctx.beginPath();
+            ctx.arc(0, 0, 8, 0, 2 * Math.PI);
+            ctx.fill();
+
+            ctx.translate(-200, -175);
+        }
+
+
+
+        function drawHand(ctx, angle, length, width) {
+            ctx.save();
+
+            ctx.lineWidth = width;
+            ctx.lineCap = 'squared';
+            ctx.strokeStyle = "#85e9f6";
+
+            ctx.translate(200, 175);
+            ctx.rotate(angle);
+
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, -length);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function setHourHand(ctx){
+            let intervalh = setInterval(function(){
+                    ctxh.clearRect(0, 0, 450, 350);
+                    drawSigns(ctxh);
+
+                    now = new Date();
+                    hour = now.getHours(); 
+                    minute = now.getMinutes();
+                    second = now.getSeconds();  
+                    hour = hour%12;
+                    hour = (hour*Math.PI/6) + (minute*Math.PI/(6*60)) + (second*Math.PI/(360*60)); 
+                    drawHand(ctxh, hour, radius*0.6, radius*0.045);
+                    console.log(minute%12);
+
+                    if(minute%12 == 0 && second/60 == 0){
+                        createClock();
+                        clearInterval(intervalh);                        
+                    }
+                }, 1000);
+        }
+
+        function setMinutesHand(ctx){
+            let intervalm = setInterval(function(){
+                        ctx.clearRect(0, 0, 450, 350);
+
+                        now = new Date();
+                        minute = now.getMinutes();
+                        second = now.getSeconds(); 
+                        minute = (minute*Math.PI/30) + (second*Math.PI/(30*60));
+                        drawHand(ctxm, minute, radius*0.8, radius*0.03);
+ 
+                        console.log(second%60);
+                    if(second/60 == 0) {
+                        createMinutes(ctxm);
+                        clearInterval(intervalm);                        
+                    }
+                }, 1000);
+        }
+
+
+
+    </script>
+</body>
+</html>
