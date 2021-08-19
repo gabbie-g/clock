@@ -1,0 +1,80 @@
+body {
+    height: 100vh;
+    margin: 0 auto;
+    background: linear-gradient(180deg, #0d0e20, #445664);
+    background-image: url("../photo.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+}
+@media (min-width: 1200px){
+    body{
+        background-size: auto;
+    }
+}
+
+#canvas-container{    
+    align-self: center;
+    width: 240px;
+    height: 184px;
+    position: relative;
+}
+@media (min-width: 260px) and (min-height: 280px){
+    #canvas-container{ 
+        width: 320px; 
+        height: 246px;
+    }
+}
+
+@media (min-width: 480px) and (min-height: 350px){
+    #canvas-container{ 
+        width: 450px; 
+        height: 350px;
+    }
+}
+@media (min-width: 800px) and (min-height: 600px){
+    #canvas-container{ 
+        width: 670px; 
+        height: 515px;
+    }
+}
+
+#canvas-h{
+    box-sizing: border-box;
+    border-radius: 100%;
+    border: 5px solid #85e9f6;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+}
+
+#canvas-m {
+    box-sizing: border-box;
+    position: absolute;
+    border-radius: 100%;
+    border: 8px solid transparent;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+}
+
+#canvas-s {
+    box-sizing: border-box;
+    position: absolute;
+    border-radius: 100%;
+    border: 8px solid transparent;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+}
+
+@media only screen and (min-width: 414px) {
+    #canvas-h,
+    #canvas-m,
+    #canvas-s {
+        border-width: 8px;
+    }
+}
